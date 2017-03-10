@@ -12,7 +12,6 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
         public List<Thread> tPool;
         public object QueueSync;
         public object lockConsole;
-        public object QueueSize;
         public bool BreakAll;
         public bool endOfFile;
         public int blockNumber;
@@ -23,7 +22,6 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
             tPool = new List<Thread>();
             QueueSync = new object();
             lockConsole = new object();
-            QueueSize = new object();
             BreakAll = false;
             endOfFile = false;
         }

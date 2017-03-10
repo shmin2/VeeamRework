@@ -39,6 +39,7 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                         }
                         else if (!_sync.endOfFile)
                             Monitor.Wait(_sync.QueueSync);
+                            //Thread.Sleep(1);
                         else
                             Thread.CurrentThread.Join();
                     }
@@ -50,7 +51,7 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                         lock (_sync.lockConsole)
                         {
                             double fullPercent = Math.Round(_sync.blockNumber / (double)_sync.numberOfBlocks * 100);
-                            Console.Title = string.Format("Loading: {0}% {1}/{2}", fullPercent, blockNumber, _sync.numberOfBlocks);
+                            Console.Title = string.Format("Loading: {0}%", fullPercent);
                         }
                     }
                 }
