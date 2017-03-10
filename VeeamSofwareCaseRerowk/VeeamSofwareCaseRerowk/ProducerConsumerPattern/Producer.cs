@@ -27,13 +27,16 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                     _sync.numberOfBlocks = ((long)Math.Round(s.Length / (double)Program.BlockSize)) + 1;
                     while (s.Position < s.Length)
                     {
-                        byte[] block = new byte[Program.BlockSize];
+                        byte[] block = new byte[Program.BlockSize];  
                         if (_sync.BreakAll)
-                            break;
-
-                        _nRead = s.Read(block, 0, Program.BlockSize);
+                            break;  
                         lock (_sync.QueueSync)
                         {
+                            if (_queue.Count >= Environment.ProcessorCount)
+                            {
+                                lock (_sync.QueueSync) { Monitor.Wait(_sync.QueueSync); }
+                            }
+                            _nRead = s.Read(block, 0, Program.BlockSize);
                             if (_queue.Count < Environment.ProcessorCount)
                             {
                                 _queue.Enqueue(block);
@@ -49,10 +52,6 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                                 }
                                 break;
                             }
-                            //if (_queue.Count >= Environment.ProcessorCount)
-                            //{
-                            //    lock (_sync.QueueSync) { Monitor.Wait(_sync.QueueSync); }
-                            //}
                         }
                     }
                     _sync.endOfFile = true;

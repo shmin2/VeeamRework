@@ -36,10 +36,10 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                         {
                             block = _queue.Dequeue();
                             newBlock = true;
+                            Monitor.Pulse(_sync.QueueSync);
                         }
                         else if (!_sync.endOfFile)
                             Monitor.Wait(_sync.QueueSync);
-                            //Thread.Sleep(1);
                         else
                             Thread.CurrentThread.Join();
                     }
@@ -61,15 +61,20 @@ namespace VeeamSoftwareFirstCase.ProducerConsumerPattern
                 Console.WriteLine("OutOfMemoryException - попробуйте уменьшить размер блока данных");
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
-                _sync.BreakAll = true;
+                foreach (var item in _sync.tPool)
+                {
+                    item.Abort();
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Current threadId:{0}", Thread.CurrentThread.ManagedThreadId);
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
-                _sync.BreakAll = true;
-
+                foreach (var item in _sync.tPool)
+                {
+                    item.Abort();
+                }
             }
             finally
             {
